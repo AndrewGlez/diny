@@ -325,22 +325,34 @@ func doCopy(message string) tea.Cmd {
 
 func loadSplitPlan(diff string, cfg *config.Config, staged []git.StagedFile, previousPlans [][]commit.SplitGroup, feedback string) tea.Cmd {
 	return func() tea.Msg {
-		var extras *commit.SplitRequestExtras
-		if len(previousPlans) > 0 || feedback != "" {
-			extras = &commit.SplitRequestExtras{
-				PreviousPlans: previousPlans,
-				Feedback:      feedback,
+		var prompt strings.Builder
+		prompt.WriteString("Staged file manifest (assign each path exactly once, even if its diff is omitted):\n")
+		for _, file := range staged {
+			fmt.Fprintf(&prompt, "%q\n", file.Path)
+		}
+		prompt.WriteString("\nStaged diff:\n")
+		prompt.WriteString(diff)
+		extras := commit.SplitRequestExtras{
+			PreviousPlans: append([][]commit.SplitGroup(nil), previousPlans...),
+			Feedback:      feedback,
+		}
+		const maxAttempts = 3
+		for attempt := 1; ; attempt++ {
+			plan, err := commit.CreateSplitPlan(prompt.String(), cfg, &extras)
+			if err != nil {
+				return errMsg{err: fmt.Errorf("failed to generate split plan: %w", err)}
 			}
+			plan = commit.NormalizePlan(plan)
+			if err := commit.ValidatePlan(plan, staged); err != nil {
+				if attempt == maxAttempts {
+					return errMsg{err: fmt.Errorf("invalid split plan after %d attempts: %w", maxAttempts, err)}
+				}
+				extras.PreviousPlans = append(extras.PreviousPlans, plan)
+				extras.Feedback = fmt.Sprintf("%s\n\nValidation error: %s. Return a corrected complete plan using the staged file manifest; each file must appear exactly once.", feedback, err)
+				continue
+			}
+			return splitPlanReadyMsg{plan: plan}
 		}
-		plan, err := commit.CreateSplitPlan(diff, cfg, extras)
-		if err != nil {
-			return errMsg{err: fmt.Errorf("failed to generate split plan: %w", err)}
-		}
-		plan = commit.NormalizePlan(plan)
-		if err := commit.ValidatePlan(plan, staged); err != nil {
-			return errMsg{err: fmt.Errorf("invalid split plan: %w", err)}
-		}
-		return splitPlanReadyMsg{plan: plan}
 	}
 }
 

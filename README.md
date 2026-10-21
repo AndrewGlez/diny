@@ -29,8 +29,12 @@ provider:
 
 Export the named environment variable with your provider key. For a keyless local
 server, set `api_key_env: ""`. Hosted feedback prompts are disabled by default.
-Split plans still require each staged file to belong to exactly one group;
-conflicting assignments are rejected, not silently discarded.
+Split requests include the complete staged-file manifest, including files whose
+diffs were filtered out. Each staged file must belong to exactly one group.
+If a plan duplicates, omits, or invents a file, Diny sends the rejected plan and
+validation error back to the provider for correction, preserving user feedback.
+At most three plans are requested. Persistent conflicts remain an error; Diny
+never silently chooses a group or modifies the Git index while generating a plan.
 
 ## Features
 
