@@ -34,6 +34,19 @@ commit:
   # Show and copy commit hash to clipboard after committing
   hash_after_commit: false
 
-# Prompt settings (rating & star prompts after commit)
+# Prompt settings (rating & star prompts after commit). These send feedback to
+# the upstream hosted service, so they are off in this build.
 prompts:
-  enabled: true
+  enabled: false
+
+# Model provider. Any OpenAI-compatible chat completions endpoint works:
+# Ollama Cloud, OpenAI, OpenRouter, llama.cpp server, Ollama (local), etc.
+provider:
+  # Base URL; requests go to <base_url>/chat/completions
+  base_url: https://ollama.com/v1
+  model: deepseek-v4.1-flash:1017
+  # Environment variable that holds the API key. Leave empty for keyless servers.
+  api_key_env: OLLAMA_API_KEY
+  # Send response_format=json_object for split plans. Disable for servers that reject it.
+  json_mode: true
+  timeout_seconds: 120

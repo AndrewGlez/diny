@@ -11,7 +11,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dinoDanic/diny/config"
 	"github.com/dinoDanic/diny/git"
-	"github.com/dinoDanic/diny/groq"
+	"github.com/dinoDanic/diny/llm"
 )
 
 func loadRepoInfo() tea.Cmd {
@@ -58,7 +58,7 @@ func doGenerate(olderRef, newerRef string, cfg *config.Config) tea.Cmd {
 		gitName := git.GetGitName()
 		prompt := buildChangelogPrompt(repoName, gitName, olderRef, newerRef, commits, diff)
 
-		result, err := groq.CreateChangelogWithGroq(prompt, cfg)
+		result, err := llm.CreateChangelogWithLLM(prompt, cfg)
 		if err != nil {
 			return errMsg{err: fmt.Errorf("failed to generate changelog: %w", err)}
 		}
@@ -79,7 +79,7 @@ func doRegenerate(prompt string, cfg *config.Config, previousResults []string) t
 			modifiedPrompt += "\n\nPlease provide an alternative changelog with a different approach."
 		}
 
-		result, err := groq.CreateChangelogWithGroq(modifiedPrompt, cfg)
+		result, err := llm.CreateChangelogWithLLM(modifiedPrompt, cfg)
 		if err != nil {
 			return errMsg{err: fmt.Errorf("failed to regenerate changelog: %w", err)}
 		}

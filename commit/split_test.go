@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/dinoDanic/diny/git"
-	"github.com/dinoDanic/diny/groq"
+	"github.com/dinoDanic/diny/llm"
 )
 
 func TestNormalizePlanPath(t *testing.T) {
@@ -39,7 +39,7 @@ func TestValidatePlan_StripsBogusPrefix(t *testing.T) {
 		{Status: "A", Path: "features/auth/login.tsx"},
 		{Status: "A", Path: "features/auth/register.tsx"},
 	}
-	plan := []groq.SplitGroup{
+	plan := []llm.SplitGroup{
 		{
 			Order:   1,
 			Type:    "feat",
@@ -62,7 +62,7 @@ func TestValidatePlan_UnresolvablePathStillErrors(t *testing.T) {
 	staged := []git.StagedFile{
 		{Status: "A", Path: "features/auth/login.tsx"},
 	}
-	plan := []groq.SplitGroup{
+	plan := []llm.SplitGroup{
 		{
 			Order:   1,
 			Type:    "feat",
@@ -83,7 +83,7 @@ func TestValidatePlan_DuplicateAcrossGroupsAfterNormalize(t *testing.T) {
 	staged := []git.StagedFile{
 		{Status: "A", Path: "features/auth/login.tsx"},
 	}
-	plan := []groq.SplitGroup{
+	plan := []llm.SplitGroup{
 		{Order: 1, Type: "feat", Message: "a", Files: []string{"features/auth/login.tsx"}},
 		{Order: 2, Type: "feat", Message: "b", Files: []string{"a/features/auth/login.tsx"}},
 	}

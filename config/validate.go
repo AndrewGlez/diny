@@ -25,6 +25,15 @@ func (c *Config) Validate() error {
 	if !slices.Contains(validLengths, c.Commit.Length) {
 		return fmt.Errorf("invalid length '%s', must be one of: short, normal, long", c.Commit.Length)
 	}
+	if c.Provider.BaseURL == "" {
+		return fmt.Errorf("provider.base_url is required")
+	}
+	if c.Provider.Model == "" {
+		return fmt.Errorf("provider.model is required")
+	}
+	if c.Provider.TimeoutSeconds <= 0 {
+		return fmt.Errorf("provider.timeout_seconds must be positive")
+	}
 
 	return nil
 }

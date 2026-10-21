@@ -2,11 +2,11 @@ package commit
 
 import (
 	"github.com/dinoDanic/diny/config"
-	"github.com/dinoDanic/diny/groq"
+	"github.com/dinoDanic/diny/llm"
 )
 
 func CreateCommitMessage(gitDiff string, cfg *config.Config) (string, error) {
-	commitMessage, err := groq.CreateCommitMessageWithGroq(gitDiff, cfg)
+	commitMessage, err := llm.CreateCommitMessageWithLLM(gitDiff, cfg)
 
 	if err != nil {
 		return "", err

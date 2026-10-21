@@ -4,13 +4,33 @@
 
 # diny
 
-**Free AI git commit messages. No API key. No signup.**
+**AI git commit messages using a configurable OpenAI-compatible provider.**
 
 </div>
 
 Open-source CLI that turns staged diffs into clean commits in one command.
 
 ---
+
+## Fork configuration
+
+This fork replaces the hosted Diny backend with an OpenAI-compatible provider.
+Commit messages, split plans, changelogs, and timeline analysis use this configuration
+in `~/.config/diny/config.yaml`:
+
+```yaml
+provider:
+  base_url: https://ollama.com/v1
+  model: deepseek-v4.1-flash:1017
+  api_key_env: OLLAMA_API_KEY
+  json_mode: true
+  timeout_seconds: 120
+```
+
+Export the named environment variable with your provider key. For a keyless local
+server, set `api_key_env: ""`. Hosted feedback prompts are disabled by default.
+Split plans still require each staged file to belong to exactly one group;
+conflicting assignments are rejected, not silently discarded.
 
 ## Features
 
@@ -23,7 +43,7 @@ Open-source CLI that turns staged diffs into clean commits in one command.
 - AI-powered changelog generation between tags or commits
 - Three-tier config system (global, project-shared, project-private)
 - 10+ dark and light themes
-- No API key required
+- Configurable provider endpoint, model, API-key environment variable, and timeout
 
 ## Install
 

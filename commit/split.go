@@ -7,18 +7,18 @@ import (
 
 	"github.com/dinoDanic/diny/config"
 	"github.com/dinoDanic/diny/git"
-	"github.com/dinoDanic/diny/groq"
+	"github.com/dinoDanic/diny/llm"
 )
 
 // SplitGroup is an alias to the transport type for ergonomic use across the TUI.
-type SplitGroup = groq.SplitGroup
+type SplitGroup = llm.SplitGroup
 
 // SplitRequestExtras is an alias for transport-layer extras.
-type SplitRequestExtras = groq.RequestExtras
+type SplitRequestExtras = llm.RequestExtras
 
 // CreateSplitPlan asks the backend to group the staged diff into multiple commits.
 func CreateSplitPlan(gitDiff string, cfg *config.Config, extras *SplitRequestExtras) ([]SplitGroup, error) {
-	return groq.CreateSplitPlanWithGroq(gitDiff, cfg, extras)
+	return llm.CreateSplitPlanWithLLM(gitDiff, cfg, extras)
 }
 
 // normalizePlanPath strips bogus prefixes that LLMs sometimes add to file

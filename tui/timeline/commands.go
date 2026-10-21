@@ -11,7 +11,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dinoDanic/diny/config"
 	"github.com/dinoDanic/diny/git"
-	"github.com/dinoDanic/diny/groq"
+	"github.com/dinoDanic/diny/llm"
 )
 
 func loadRepoInfo() tea.Cmd {
@@ -48,7 +48,7 @@ func fetchAndGenerate(dateChoice, startDate, endDate, dateRange string, cfg *con
 		}
 
 		prompt := fmt.Sprintf("Timeline: %s\nCommits:\n%s", dateRange, strings.Join(commits, "\n"))
-		analysis, err := groq.CreateTimelineWithGroq(prompt, cfg)
+		analysis, err := llm.CreateTimelineWithLLM(prompt, cfg)
 		if err != nil {
 			return errMsg{err: fmt.Errorf("failed to generate analysis: %w", err)}
 		}
@@ -74,7 +74,7 @@ func doRegenerate(fullPrompt string, cfg *config.Config, previousAnalyses []stri
 			modifiedPrompt += "\n\nPlease provide an alternative analysis with a different approach or focus."
 		}
 
-		analysis, err := groq.CreateTimelineWithGroq(modifiedPrompt, cfg)
+		analysis, err := llm.CreateTimelineWithLLM(modifiedPrompt, cfg)
 		if err != nil {
 			return errMsg{err: fmt.Errorf("failed to regenerate analysis: %w", err)}
 		}
@@ -94,7 +94,7 @@ func doFeedback(fullPrompt, current, feedback string, cfg *config.Config) tea.Cm
 			current, feedback,
 		)
 
-		analysis, err := groq.CreateTimelineWithGroq(modifiedPrompt, cfg)
+		analysis, err := llm.CreateTimelineWithLLM(modifiedPrompt, cfg)
 		if err != nil {
 			return errMsg{err: fmt.Errorf("failed to refine analysis: %w", err)}
 		}

@@ -35,9 +35,19 @@ type PromptsConfig struct {
 }
 
 type Config struct {
-	Theme   string        `yaml:"theme" json:"Theme"`
-	Commit  CommitConfig  `yaml:"commit" json:"Request"`
-	Prompts PromptsConfig `yaml:"prompts" json:"Prompts"`
+	Theme    string         `yaml:"theme" json:"Theme"`
+	Commit   CommitConfig   `yaml:"commit" json:"Request"`
+	Prompts  PromptsConfig  `yaml:"prompts" json:"Prompts"`
+	Provider ProviderConfig `yaml:"provider" json:"Provider"`
+}
+
+// ProviderConfig selects an OpenAI-compatible chat completions endpoint.
+type ProviderConfig struct {
+	BaseURL        string `yaml:"base_url" json:"BaseURL"`
+	Model          string `yaml:"model" json:"Model"`
+	APIKeyEnv      string `yaml:"api_key_env" json:"APIKeyEnv"`
+	JSONMode       bool   `yaml:"json_mode" json:"JSONMode"`
+	TimeoutSeconds int    `yaml:"timeout_seconds" json:"TimeoutSeconds"`
 }
 
 type CommitConfig struct {
@@ -215,7 +225,7 @@ func GetLocalProjectConfigPath() string {
 
 func loadLocalConfig(path string) (*LocalConfig, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return nil, nil 
+		return nil, nil
 	}
 
 	data, err := os.ReadFile(path)
@@ -376,7 +386,7 @@ func createVersionedProjectConfigIfNeeded() error {
 	}
 
 	if _, err := os.Stat(path); err == nil {
-		return nil 
+		return nil
 	}
 
 	template := `# Diny Project Configuration (Versioned)
