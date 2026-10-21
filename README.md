@@ -47,22 +47,16 @@ conflicting assignments are rejected, not silently discarded.
 
 ## Install
 
-### macOS / Linux
+Build this fork from source with Go:
 
 ```bash
-brew install dinoDanic/tap/diny
+git clone --branch nixos-provider https://github.com/AndrewGlez/diny.git
+cd diny
+go build -o diny .
 ```
 
-### Windows (Scoop)
-
-```powershell
-scoop bucket add dinodanic https://github.com/dinoDanic/scoop-bucket
-scoop install diny
-```
-
-### Manual
-
-Download pre-built binaries from [GitHub Releases](https://github.com/dinoDanic/diny/releases).
+Run `./diny`, or install the binary into a directory on your `PATH`.
+Upstream Homebrew, Scoop, and release binaries do not include this fork's provider support.
 
 ## Usage
 
